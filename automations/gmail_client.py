@@ -28,7 +28,7 @@ def _load_credentials() -> Credentials:
 
     if env_creds:
         logger.info("Loading Gmail credentials from GMAIL_CREDENTIALS_JSON env var")
-        creds_data = json.loads(env_creds)
+        creds_data = json.loads(env_creds.strip(), strict=False)
         # In CI we always refresh — treat the token as expired
         creds = Credentials(
             token=None,
