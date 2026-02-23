@@ -29,11 +29,12 @@ def _load_credentials() -> Credentials:
     if env_creds:
         logger.info("Loading Gmail credentials from GMAIL_CREDENTIALS_JSON env var")
         creds_data = json.loads(env_creds.strip(), strict=False)
-        # In CI we always refresh — treat the token as expired
+        # In CI we always refresh — treat the token as expired.
+        # Hardcode token_uri to avoid issues with newlines in GitHub secrets.
         creds = Credentials(
             token=None,
             refresh_token=creds_data["refresh_token"],
-            token_uri=creds_data.get("token_uri", "https://oauth2.googleapis.com/token"),
+            token_uri="https://oauth2.googleapis.com/token",
             client_id=creds_data["client_id"],
             client_secret=creds_data["client_secret"],
         )
