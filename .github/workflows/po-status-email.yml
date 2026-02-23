@@ -1,0 +1,28 @@
+name: Daily PO Status Email
+
+on:
+  schedule:
+    # 7 AM Pacific = 15:00 UTC (PST, UTC-8). During PDT this fires at 8 AM Pacific.
+    - cron: '0 15 * * *'
+  workflow_dispatch: # Allow manual triggers for testing
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Send PO status email
+        env:
+          AIRTABLE_PAT: ${{ secrets.AIRTABLE_PAT }}
+          GMAIL_CREDENTIALS_JSON: ${{ secrets.GMAIL_CREDENTIALS_JSON }}
+        run: uv run python automations/po_status_email.py
